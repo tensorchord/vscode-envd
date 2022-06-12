@@ -1,0 +1,25 @@
+{
+    "name": "vscode-envd",
+    "displayName": "vscode-envd",
+    "description": "envd extension for visual studio code",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.68.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "envd",
+            "aliases": ["envd", "envd"],
+            "extensions": [".envd"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "envd",
+            "scopeName": "build.envd",
+            "path": "./syntaxes/envd.tmLanguage.json"
+        }]
+    }
+}

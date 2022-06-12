@@ -12,14 +12,104 @@
     "contributes": {
         "languages": [{
             "id": "envd",
-            "aliases": ["envd", "envd"],
-            "extensions": [".envd"],
-            "configuration": "./language-configuration.json"
+            "aliases": ["Envd", "envd"],
+            "extensions": [".envd", "build.envd"],
+            "configuration": "./syntaxes/envd.configuration.json"
         }],
         "grammars": [{
             "language": "envd",
-            "scopeName": "build.envd",
+            "scopeName": "source.envd",
             "path": "./syntaxes/envd.tmLanguage.json"
         }]
+        
+    },
+    "main": "./out/extension.js",
+    "activationEvents": [
+        "onLanguage:envd"
+    ],
+    "commands": [
+        {
+            "command": "envd.restartServer",
+            "title": "Restart envd LSP Server"
+        }
+    ],
+    "configuration": [
+        {
+            "type": "object",
+            "title": "envd",
+            "properties": {
+                "envd.trace.server": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": "off",
+                    "description": "Log requests and responses to envd LSP",
+                    "enum": [
+                        "off",
+                        "debug"
+                    ],
+                    "pattern": "off|debug",
+                    "patternErrorMessage": "Invalid log level"
+                },
+                "envd.server.port": {
+                    "type": [
+                        "number",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "Port (on localhost) of running language server",
+                    "scope": "machine-overridable"
+                },
+                "envd.envd.path": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "File path of envd to run the language server",
+                    "scope": "machine-overridable"
+                },
+                "envd.showStatusBarButton": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether to show a button for this extension in the VSCode StatusBar",
+                    "scope": "machine-overridable"
+                }
+            }
+        }
+    ],
+    "scripts": {
+        "vscode:prepublish": "npm run clean && npm run esbuild-base -- --minify",
+        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
+        "esbuild": "npm run esbuild-base -- --sourcemap",
+        "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+        "compile": "npm run esbuild",
+        "watch": "npm run esbuild-watch",
+        "clean": "rm -rf out",
+        "prettier": "prettier --write \"src/**/*.ts\"",
+        "check": "prettier --check \"src/**/*.ts*\" && tsc -p .",
+        "test": "jest"
+    },
+    "dependencies": {
+        "@types/glob": "^7.2.0",
+        "@types/jest": "^27.4.1",
+        "@types/split2": "^3.2.1",
+        "glob": "^7.2.0",
+        "jest": "^27.5.1",
+        "split2": "^4.1.0",
+        "ts-jest": "^27.1.4",
+        "vscode-languageclient": "^7.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^17.0.13",
+        "@types/vscode": "^1.63.0",
+        "@vscode/test-electron": "^1.6.2",
+        "esbuild": "^0.14.29",
+        "prettier": "2.6.2",
+        "typescript": "^4.4.3"
+    },
+    "jest": {
+        "preset": "ts-jest"
     }
 }

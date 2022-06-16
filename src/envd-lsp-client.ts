@@ -60,7 +60,7 @@ export class EnvdLspClient extends LanguageClient {
       documentSelector: [{ scheme: "file", language: extensionLang }],
       synchronize: {
         // Notify the server about file changes to relevant files contained in the workspace
-        fileEvents: workspace.createFileSystemWatcher("**/Tiltfile"),
+        fileEvents: workspace.createFileSystemWatcher("**/*.envd"),
       },
       outputChannel: ch,
       traceOutputChannel: ch,
@@ -80,7 +80,7 @@ export class EnvdLspClient extends LanguageClient {
 
   public registerCommands() {
     this.context.subscriptions.push(
-      commands.registerCommand("tiltfile.restartServer", () => {
+      commands.registerCommand("envd.restartServer", () => {
         this.info("Restarting server")
         this.restart()
       })

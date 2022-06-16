@@ -2,82 +2,97 @@
     "name": "vscode-envd",
     "displayName": "vscode-envd",
     "description": "envd extension for visual studio code",
+    "publisher": "tensorchord",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tensorchord/vscode-envd"
+    },
     "version": "0.0.1",
     "engines": {
-        "vscode": "^1.68.0"
+        "vscode": "^1.63.0"
     },
     "categories": [
         "Programming Languages"
+    ],
+    "keywords": [
+        "envd",
+        "Kubernetes",
+        "kubernetes",
+        "k8s",
+        "development",
+        "development environment",
+        "dev env",
+        "docker",
+        "buildkit"
     ],
     "contributes": {
         "languages": [{
             "id": "envd",
             "aliases": ["Envd", "envd"],
-            "extensions": [".envd", "build.envd"],
+            "extensions": [".envd", "build.envd", "config.envd"],
             "configuration": "./syntaxes/envd.configuration.json"
         }],
         "grammars": [{
             "language": "envd",
             "scopeName": "source.envd",
             "path": "./syntaxes/envd.tmLanguage.json"
-        }]
-        
+        }],
+        "configuration": [
+            {
+                "type": "object",
+                "title": "envd",
+                "properties": {
+                    "envd.trace.server": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "default": "off",
+                        "description": "Log requests and responses to envd LSP",
+                        "enum": [
+                            "off",
+                            "debug"
+                        ],
+                        "pattern": "off|debug",
+                        "patternErrorMessage": "Invalid log level"
+                    },
+                    "envd.server.port": {
+                        "type": [
+                            "number",
+                            "null"
+                        ],
+                        "default": null,
+                        "description": "Port (on localhost) of running language server",
+                        "scope": "machine-overridable"
+                    },
+                    "envd.envd.path": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "default": null,
+                        "description": "File path of envd to run the language server",
+                        "scope": "machine-overridable"
+                    },
+                    "envd.showStatusBarButton": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Whether to show a button for this extension in the VSCode StatusBar",
+                        "scope": "machine-overridable"
+                    }
+                }
+            }
+        ],
+        "commands": [
+            {
+                "command": "envd.restartServer",
+                "title": "Restart envd LSP Server"
+            }
+        ]
     },
     "main": "./out/extension.js",
     "activationEvents": [
         "onLanguage:envd"
-    ],
-    "commands": [
-        {
-            "command": "envd.restartServer",
-            "title": "Restart envd LSP Server"
-        }
-    ],
-    "configuration": [
-        {
-            "type": "object",
-            "title": "envd",
-            "properties": {
-                "envd.trace.server": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "default": "off",
-                    "description": "Log requests and responses to envd LSP",
-                    "enum": [
-                        "off",
-                        "debug"
-                    ],
-                    "pattern": "off|debug",
-                    "patternErrorMessage": "Invalid log level"
-                },
-                "envd.server.port": {
-                    "type": [
-                        "number",
-                        "null"
-                    ],
-                    "default": null,
-                    "description": "Port (on localhost) of running language server",
-                    "scope": "machine-overridable"
-                },
-                "envd.envd.path": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "default": null,
-                    "description": "File path of envd to run the language server",
-                    "scope": "machine-overridable"
-                },
-                "envd.showStatusBarButton": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether to show a button for this extension in the VSCode StatusBar",
-                    "scope": "machine-overridable"
-                }
-            }
-        }
     ],
     "scripts": {
         "vscode:prepublish": "npm run clean && npm run esbuild-base -- --minify",

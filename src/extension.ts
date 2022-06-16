@@ -23,6 +23,7 @@ let client: EnvdLspClient
 
 export function activate(context: ExtensionContext) {
   const ch = window.createOutputChannel(extensionName)
+  ch.append("???")
   client = new EnvdLspClient(context, ch)
   client.start()
   // tiltfileErrorWatcher = new TiltfileErrorWatcher(context, ch)

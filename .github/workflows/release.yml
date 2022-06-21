@@ -25,8 +25,7 @@ jobs:
       - name: Package
         run: |
           mkdir -p bin
-          ls
-          mv envd-lsp-* bin/
+          mv envd-lsp_* bin/
           ls bin
           npm run vscode:prepublish
       - name: Publish to Visual Studio Marketplace

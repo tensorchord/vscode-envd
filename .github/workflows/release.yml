@@ -24,8 +24,9 @@ jobs:
           fileName: "*"
       - name: Package
         run:
-          mkdir bin
+          mkdir -p bin
           mv envd-lsp-* bin/
+          ls bin
           npm run vscode:prepublish
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1

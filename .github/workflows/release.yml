@@ -23,14 +23,15 @@ jobs:
           latest: true
           fileName: "*"
       - name: Package
-        run:
-          mkdir bin
-          mv envd-lsp-* bin/
+        run: |
+          mkdir -p bin
+          mv envd-lsp_* bin/
+          npm i
           npm run vscode:prepublish
-      # - name: Publish to Open VSX Registry
-      #   uses: HaaLeo/publish-vscode-extension@v1
-      #   with:
-      #     pat: ${{ secrets.OPEN_VSX_TOKEN }}
+      - name: Publish to Open VSX Registry
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: ${{ secrets.OPEN_VSX_TOKEN }}
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1
         with:

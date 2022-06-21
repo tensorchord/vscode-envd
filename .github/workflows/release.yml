@@ -26,7 +26,7 @@ jobs:
         run: |
           mkdir -p bin
           mv envd-lsp_* bin/
-          ls bin
+          npm i
           npm run vscode:prepublish
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1

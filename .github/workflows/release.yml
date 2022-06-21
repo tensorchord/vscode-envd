@@ -25,6 +25,7 @@ jobs:
       - name: Package
         run: |
           mkdir -p bin
+          ls
           mv envd-lsp-* bin/
           ls bin
           npm run vscode:prepublish

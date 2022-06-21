@@ -1,0 +1,38 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  pull_request:
+    paths:
+    - '.github/workflows/release.yml'
+    - 'package.json'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Download language server binaries
+        uses: robinraju/release-downloader@v1.4
+        with:
+          repository: "tensorchord/envd-lsp"
+          latest: true
+          fileName: "*"
+      - name: Package
+        run:
+          mkdir bin
+          mv envd-lsp-* bin/
+          npm run vscode:prepublish
+      # - name: Publish to Open VSX Registry
+      #   uses: HaaLeo/publish-vscode-extension@v1
+      #   with:
+      #     pat: ${{ secrets.OPEN_VSX_TOKEN }}
+      - name: Publish to Visual Studio Marketplace
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
+          registryUrl: https://marketplace.visualstudio.com

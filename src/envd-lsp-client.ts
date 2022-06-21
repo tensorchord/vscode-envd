@@ -13,6 +13,8 @@
 // limitations under the License.
 
 import net = require("net")
+import path from "path"
+import process from "process"
 import { ChildProcess, spawn } from "child_process"
 import {
   commands,
@@ -103,9 +105,13 @@ export class EnvdLspClient extends LanguageClient {
       return { writer: socket, reader: socket }
     }
 
+    var envdPath = path.join(__dirname, "../bin/envd-lsp_Linux_x86_64")
+
     try {
-      // const envdPath = await checkEnvdVersion(this)
-      const envdPath = "envd"
+      switch (process.platform) {
+        case "darwin":
+          envdPath = path.join(__dirname, "../bin/envd-lsp_Darwin_x86_64")
+      }
       const args = []
       this.info("Starting child process")
       const trace = getTrace()

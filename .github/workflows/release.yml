@@ -26,6 +26,7 @@ jobs:
         run: |
           mkdir -p bin
           mv envd-lsp_* bin/
+          chmod a+x bin/*
           npm i
           npm run vscode:prepublish
       - name: Publish to Open VSX Registry

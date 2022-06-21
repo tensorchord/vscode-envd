@@ -23,7 +23,7 @@ jobs:
           latest: true
           fileName: "*"
       - name: Package
-        run:
+        run: |
           mkdir -p bin
           mv envd-lsp-* bin/
           ls bin

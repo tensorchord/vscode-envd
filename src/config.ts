@@ -12,37 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Uri, window, workspace } from "vscode"
+import {type Uri, window, workspace} from 'vscode';
 
-export const ENVD = "envd"
-const SECTION = "envd"
+export const envd = 'envd';
 
 export function getConfig(uri?: Uri) {
-  if (!uri) {
-    if (window.activeTextEditor) {
-      uri = window.activeTextEditor.document.uri
-    } else {
-      uri = null
-    }
-  }
-  return workspace.getConfiguration(SECTION, uri)
+	const section = 'envd';
+	if (!uri) {
+		if (window.activeTextEditor) {
+			uri = window.activeTextEditor.document.uri;
+		}
+	}
+
+	return workspace.getConfiguration(section, uri);
 }
 
-export type Port = number | null
+export type Port = number | undefined;
 export function getServerPort(): Port {
-  return getConfig().get<Port>("server.port")
+	return getConfig().get<Port>('server.port');
 }
 
-export function getTrace(): string {
-  return getConfig().get<string>("trace.server")
+export function getTrace(): boolean {
+	return getConfig().get<boolean>('server.trace')!;
 }
 
 export function getEnvdPath(): string {
-  const path = getConfig().get<string>("envd.path")
-  if (path === null) return ENVD
-  return path
+	const path = getConfig().get<string>('envd.path');
+	if (!path) {
+		return envd;
+	}
+
+	return path;
 }
 
 export function getShowStatusBarButton(): boolean {
-  return getConfig().get<boolean>("showStatusBarButton")
+	return getConfig().get<boolean>('showStatusBarButton')!;
 }

@@ -13,37 +13,38 @@
 // limitations under the License.
 
 import {
-  CloseAction,
-  ErrorAction,
-  ErrorHandler,
-  Message,
-} from "vscode-languageclient"
-import { EnvdLspClient } from "./envd-lsp-client"
+	CloseAction,
+	type ErrorAction,
+	type ErrorHandler,
+	type Message,
+} from 'vscode-languageclient';
+import {type EnvdLspClient} from './envd-lsp-client';
 
 export class PlaceholderErrorHandler implements ErrorHandler {
-  public delegate: ErrorHandler
+	public delegate!: ErrorHandler;
 
-  error(error: Error, message: Message, count: number): ErrorAction {
-    return this.delegate.error(error, message, count)
-  }
+	error(error: Error, message: Message, count: number): ErrorAction {
+		return this.delegate.error(error, message, count);
+	}
 
-  closed(): CloseAction {
-    return this.delegate.closed()
-  }
+	closed(): CloseAction {
+		return this.delegate.closed();
+	}
 }
 
 export class EnvdErrorHandler extends PlaceholderErrorHandler {
-  constructor(private client: EnvdLspClient, maxRestartCount: number) {
-    super()
-    this.delegate = this.client.createDefaultErrorHandler(maxRestartCount)
-  }
+	constructor(private readonly client: EnvdLspClient, maxRestartCount: number) {
+		super();
+		this.delegate = this.client.createDefaultErrorHandler(maxRestartCount);
+	}
 
-  closed(): CloseAction {
-    // default error handler backs off after several restarts;
-    // always restart when using the debug server
-    if (this.client.usingDebugServer) {
-      return CloseAction.Restart
-    }
-    return this.delegate.closed()
-  }
+	closed(): CloseAction {
+		// Default error handler backs off after several restarts;
+		// always restart when using the debug server
+		if (this.client.usingDebugServer) {
+			return CloseAction.Restart;
+		}
+
+		return this.delegate.closed();
+	}
 }

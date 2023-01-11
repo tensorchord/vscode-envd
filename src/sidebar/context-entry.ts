@@ -4,7 +4,7 @@ import {EnvdTreeItem} from './shared-entry';
 
 /**
  * Entry of current used context
- * 
+ *
  * @param value context name
  * @param index index of this context
  * @var iconPath path of icon file
@@ -31,7 +31,7 @@ export class ContextCurrent extends EnvdTreeItem {
 
 /**
  * Entry of other(not used) context
- * 
+ *
  * @param value context name
  * @param index index of this context
  * @var iconPath path of icon file
@@ -58,7 +58,7 @@ export class ContextOther extends EnvdTreeItem {
 
 /**
  * Entry of builder of a context
- * 
+ *
  * @param value builder name
  * @param parentId Index of context that entry belongs to
  * @var iconPath path of icon file
@@ -87,7 +87,7 @@ export class Builder extends EnvdTreeItem {
 
 /**
  * Entry of builder address of a context
- * 
+ *
  * @param value builder address
  * @param parentId Index of context that entry belongs to
  * @var iconPath path of icon file
@@ -116,7 +116,7 @@ export class BuilderAddress extends EnvdTreeItem {
 
 /**
  * Entry of runner of a context
- * 
+ *
  * @param value runner name
  * @param parentId Index of context that entry belongs to
  * @var iconPath path of icon file
@@ -145,7 +145,7 @@ export class Runner extends EnvdTreeItem {
 
 /**
  * Entry of runner address of a context
- * 
+ *
  * @param value runner address
  * @param parentId Index of context that entry belongs to
  * @var iconPath path of icon file

@@ -4,7 +4,7 @@ import {EnvdTreeItem} from './shared-entry';
 
 /**
  * Entry of panel of a image
- * 
+ *
  * @param value context name
  * @param index index of this image
  * @var iconPath path of icon file
@@ -31,7 +31,7 @@ export class Image extends EnvdTreeItem {
 
 /**
  * Entry of digest ID of image
- * 
+ *
  * @param value digest ID
  * @param parentId index of image that entry belongs to
  * @var iconPath path of icon file
@@ -59,7 +59,7 @@ export class IdEntry extends EnvdTreeItem {
 
 /**
  * Entry of size of image
- * 
+ *
  * @param value image size
  * @param parentId index of image that entry belongs to
  * @var iconPath path of icon file

@@ -22,7 +22,7 @@ export abstract class EnvdTreeItem extends TreeItem {
 
 /**
  * Entry of common endpoint of environment/image
- * 
+ *
  * @param value endpoint address
  * @param parentId index of environment/image that entry belongs to
  * @var iconPath path of icon file
@@ -51,7 +51,7 @@ export class EndPointEntry extends EnvdTreeItem {
 
 /**
  * Entry of status of environment/image
- * 
+ *
  * @param value status description
  * @param parentId index of environment/image that entry belongs to
  * @var iconPath path of icon file
@@ -80,7 +80,7 @@ export class StatusEntry extends EnvdTreeItem {
 
 /**
  * Entry of GPU support of environment/image
- * 
+ *
  * @param value GPU support information
  * @param parentId index of environment/image that entry belongs to
  * @var iconPath path of icon file
@@ -110,7 +110,7 @@ export class GPUEntry extends EnvdTreeItem {
 
 /**
  * Entry of dependency panel of environment/image
- * 
+ *
  * @param parentId index of environment/image that entry belongs to
  * @var iconPath path of icon file
  * @var contextValue unique ID of this entry, could be used in package.json
@@ -136,8 +136,8 @@ export class Dependency extends EnvdTreeItem {
 }
 
 /**
- * Entry of a dependency type of environment/image 
- * 
+ * Entry of a dependency type of environment/image
+ *
  * @param parentId index of environment/image that entry belongs to
  * @var iconPath path of icon file
  * @var contextValue unique ID of this entry, could be used in package.json
@@ -166,8 +166,8 @@ export class DepTypeEntry extends EnvdTreeItem {
 }
 
 /**
- * Entry of a dependency of environment/image 
- * 
+ * Entry of a dependency of environment/image
+ *
  * @param parentId index of environment/image that entry belongs to
  * @var iconPath path of icon file
  * @var contextValue unique ID of this entry, could be used in package.json

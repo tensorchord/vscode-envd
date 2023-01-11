@@ -1,6 +1,6 @@
 /**
- * Commands call `Envd` and collect their output, 
- * will be runned backward by child_process.execSync 
+ * Commands call `Envd` and collect their output,
+ * will be runned backward by child_process.execSync
  * and the error will be handled by our VSCode format logger
  */
 import {execSync} from 'child_process';
@@ -28,7 +28,7 @@ export type EnvdVersion = {
 
 export function checkEnvdVersion(envdPath: string): string {
 	const command = `${envdPath} version --format json`;
-	const versionInfo = cmdOutputJSONHandle<EnvdVersion>(command);
+	const versionInfo = cmdOutputJsonHandle<EnvdVersion>(command);
 	return versionInfo.envd;
 }
 
@@ -45,7 +45,7 @@ export type EnvInfo = {
 
 export function listEnvs(envdPath: string): EnvInfo[] {
 	const command = `${envdPath} envs ls --format json`;
-	const envInfo = cmdOutputJSONHandle<EnvInfo[]>(command);
+	const envInfo = cmdOutputJsonHandle<EnvInfo[]>(command);
 	return envInfo;
 }
 
@@ -68,7 +68,7 @@ export type EnvDependency = {
 
 export function descEnv(envdPath: string, envName: string): EnvDescribe {
 	const command = `${envdPath} envs describe --env ${envName} --format json`;
-	const envDesc = cmdOutputJSONHandle<EnvDescribe>(command);
+	const envDesc = cmdOutputJsonHandle<EnvDescribe>(command);
 	return envDesc;
 }
 
@@ -85,13 +85,13 @@ export type ImgInfo = {
 
 export function listImgs(envdPath: string): ImgInfo[] {
 	const command = `${envdPath} image ls --format json`;
-	const imgInfo = cmdOutputJSONHandle<ImgInfo[]>(command);
+	const imgInfo = cmdOutputJsonHandle<ImgInfo[]>(command);
 	return imgInfo;
 }
 
 export function descImg(envdPath: string, imgName: string): EnvDescribe {
 	const command = `${envdPath} image describe --image ${imgName} --format json`;
-	const imgDesc = cmdOutputJSONHandle<EnvDescribe>(command);
+	const imgDesc = cmdOutputJsonHandle<EnvDescribe>(command);
 	return imgDesc;
 }
 
@@ -106,11 +106,11 @@ export type CtxInfo = {
 
 export function listContexts(envdPath: string): CtxInfo[] {
 	const command = `${envdPath} context ls --format json`;
-	const ctxInfo = cmdOutputJSONHandle<CtxInfo[]>(command);
+	const ctxInfo = cmdOutputJsonHandle<CtxInfo[]>(command);
 	return ctxInfo;
 }
 
-function cmdOutputJSONHandle<T>(command: string): T {
+function cmdOutputJsonHandle<T>(command: string): T {
 	try {
 		const output = execSync(command, {encoding: 'utf8', maxBuffer: 50 * 1024 * 1024}).toString();
 		const envInfo: T = JSON.parse(output) as T;

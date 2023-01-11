@@ -4,7 +4,7 @@ import {EnvdTreeItem} from './shared-entry';
 
 /**
  * Entry of panel of a environment
- * 
+ *
  * @param value context name
  * @param index index of this environment
  * @var iconPath path of icon file
@@ -31,7 +31,7 @@ export class Environment extends EnvdTreeItem {
 
 /**
  * Entry of SSH endpoint of environment
- * 
+ *
  * @param value ssh endpoint alias
  * @param parentId index of environment that entry belongs to
  * @var iconPath path of icon file
@@ -60,7 +60,7 @@ export class SSHEntry extends EnvdTreeItem {
 
 /**
  * Entry of image tag of environment
- * 
+ *
  * @param value image tag
  * @param parentId index of environment that entry belongs to
  * @var iconPath path of icon file
@@ -88,7 +88,7 @@ export class ImageTag extends EnvdTreeItem {
 
 /**
  * Entry of port panel of environment
- * 
+ *
  * @param name image tag
  * @param index index of this port
  * @param parentId index of environment that entry belongs to
@@ -121,7 +121,7 @@ export class Port extends EnvdTreeItem {
 
 /**
  * Entry of port number of environment
- * 
+ *
  * @param value port number
  * @param target port name that entry belongs to
  * @param parentId index of environment that entry belongs to
@@ -151,7 +151,7 @@ export class PortNumEntry extends EnvdTreeItem {
 
 /**
  * Entry of port IP address of environment
- * 
+ *
  * @param value IP address
  * @param target port name that entry belongs to
  * @param parentId index of environment that entry belongs to

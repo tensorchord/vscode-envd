@@ -13,9 +13,9 @@ type ImgCache = {
 };
 
 /**
- * ImgProvider fill data into sidebar tree view sub-panel `Image`, data will 
+ * ImgProvider fill data into sidebar tree view sub-panel `Image`, data will
  * be cached and refreshed from `Envd envs ls` only happen when necessary
- * 
+ *
  * @var cache cache of all image information
  * @method getTreeItem VSCode API implementation, Get TreeItem representation of the element
  * @method getChildren VSCode API implementation, Get the children of element or root if no element is passed.

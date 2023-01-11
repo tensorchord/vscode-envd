@@ -11,9 +11,9 @@ type ContextCache = {
 };
 
 /**
- * CtxProvider fill data into sidebar tree view sub-panel `Context`, data will 
+ * CtxProvider fill data into sidebar tree view sub-panel `Context`, data will
  * be cached and refreshed from `Envd context ls` only happen when necessary
- * 
+ *
  * @var cache cache of all context information
  * @method getTreeItem VSCode API implementation, Get TreeItem representation of the element
  * @method getChildren VSCode API implementation, Get the children of element or root if no element is passed.

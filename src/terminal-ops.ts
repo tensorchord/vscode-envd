@@ -65,11 +65,9 @@ export function attachEndpoint(endpoint: string) {
 	void env.openExternal(Uri.parse(address));
 }
 
-
-
 /**
- * 
- * @param info 
+ *
+ * @param info
  */
 export async function envdUseContext(info: CtxInfo) {
 	logger.info(`Request to use ${info.context} context`, logger.Module.MANAGER);
@@ -163,12 +161,11 @@ function createOrActivateTerminal(): Terminal {
 }
 
 /**
- * Commands instruct `Envd` to do some operation, 
+ * Commands instruct `Envd` to do some operation,
  * will be runned foreground for user to check `Envd` logs.
- * We open a VSCode terminal and send command to it, 
+ * We open a VSCode terminal and send command to it,
  * the error won't be handled as they could be inspected from terminal
  */
-
 
 function useContext(envdPath: string, ctxName: string) {
 	const terminal = createOrActivateTerminal();

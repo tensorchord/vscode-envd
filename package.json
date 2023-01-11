@@ -26,35 +26,212 @@
         "buildkit"
     ],
     "contributes": {
-        "languages": [{
-            "id": "envd",
-            "aliases": ["Envd", "envd"],
-            "extensions": [".envd", "build.envd", "config.envd"],
-            "configuration": "./syntaxes/envd.configuration.json"
-        }],
-        "grammars": [{
-            "language": "envd",
-            "scopeName": "source.envd",
-            "path": "./syntaxes/envd.tmLanguage.json"
-        }],
+        "languages": [
+            {
+                "id": "envd",
+                "aliases": [
+                    "Envd",
+                    "envd"
+                ],
+                "extensions": [
+                    ".envd",
+                    "build.envd",
+                    "config.envd"
+                ],
+                "configuration": "./syntaxes/envd.configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "envd",
+                "scopeName": "source.envd",
+                "path": "./syntaxes/envd.tmLanguage.json"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "envd-explorer",
+                    "title": "Envd VSCode Explorer",
+                    "icon": "media/dark/envd.svg"
+                }
+            ]
+        },
+        "views": {
+            "envd-explorer": [
+                {
+                    "id": "envd-environment",
+                    "name": "Environments"
+                },
+                {
+                    "id": "envd-image",
+                    "name": "Images"
+                },
+                {
+                    "id": "envd-context",
+                    "name": "Contexts"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "envd.restartServer",
+                "title": "Restart envd LSP Server"
+            },
+            {
+                "command": "envd-environment.refresh",
+                "title": "Refresh environments",
+                "icon": {
+                    "light": "media/light/refresh.svg",
+                    "dark": "media/dark/refresh.svg"
+                }
+            },
+            {
+                "command": "environment.attach-ssh",
+                "title": "Attach to terminal",
+                "icon": {
+                    "light": "media/light/arrow-right.svg",
+                    "dark": "media/dark/arrow-right.svg"
+                }
+            },
+            {
+                "command": "environment.attach-window",
+                "title": "Attach to VSCode",
+                "icon": {
+                    "light": "media/light/empty-window.svg",
+                    "dark": "media/dark/empty-window.svg"
+                }
+            },
+            {
+                "command": "endpoint.attach-endpoint",
+                "title": "Attach to EndPoint",
+                "icon": {
+                    "light": "media/light/arrow-right.svg",
+                    "dark": "media/dark/arrow-right.svg"
+                }
+            },
+            {
+                "command": "environment.destroy",
+                "title": "Destroy"
+            },
+            {
+                "command": "envd-image.refresh",
+                "title": "Refresh images",
+                "icon": {
+                    "light": "media/light/refresh.svg",
+                    "dark": "media/dark/refresh.svg"
+                }
+            },
+            {
+                "command": "image.remove",
+                "title": "Remove"
+            },
+            {
+                "command": "envd-context.refresh",
+                "title": "Refresh context",
+                "icon": {
+                    "light": "media/light/refresh.svg",
+                    "dark": "media/dark/refresh.svg"
+                }
+            },
+            {
+                "command": "context.remove",
+                "title": "Remove"
+            },
+            {
+                "command": "context.use",
+                "title": "Use the context",
+                "icon": {
+                    "light": "media/light/location.svg",
+                    "dark": "media/dark/location.svg"
+                }
+            }
+        ],
+        "menus": {
+            "view/item/context": [
+                {
+                    "command": "environment.attach-ssh",
+                    "when": "view == envd-environment && viewItem == environment",
+                    "group": "inline"
+                },
+                {
+                    "command": "environment.attach-window",
+                    "when": "view ==  envd-environment && viewItem == environment",
+                    "group": "inline"
+                },
+                {
+                    "command": "endpoint.attach-endpoint",
+                    "when": "view == envd-environment && viewItem == endpoint",
+                    "group": "inline"
+                },
+                {
+                    "command": "environment.attach-ssh",
+                    "when": "view == envd-environment && viewItem == environment",
+                    "group": "environment@0"
+                },
+                {
+                    "command": "environment.attach-window",
+                    "when": "view == envd-environment && viewItem == environment",
+                    "group": "environment@1"
+                },
+                {
+                    "command": "endpoint.attach-endpoint",
+                    "when": "view == envd-environment && viewItem == endpoint",
+                    "group": "endpoint@1"
+                },
+                {
+                    "command": "environment.destroy",
+                    "when": "view == envd-environment && viewItem == environment",
+                    "group": "environment@2"
+                },
+                {
+                    "command": "image.remove",
+                    "when": "view == envd-image && viewItem == image",
+                    "group": "image@0"
+                },
+                {
+                    "command": "context.use",
+                    "when": "view == envd-context && viewItem == context",
+                    "group": "inline"
+                },
+                {
+                    "command": "context.use",
+                    "when": "view == envd-context && viewItem == context",
+                    "group": "context@0"
+                },
+                {
+                    "command": "context.remove",
+                    "when": "view == envd-context && viewItem == context",
+                    "group": "context@1"
+                }
+            ],
+            "view/title": [
+                {
+                    "command": "envd-environment.refresh",
+                    "when": "view == envd-environment",
+                    "group": "navigation"
+                },
+                {
+                    "command": "envd-image.refresh",
+                    "when": "view == envd-image",
+                    "group": "navigation"
+                },
+                {
+                    "command": "envd-context.refresh",
+                    "when": "view == envd-context",
+                    "group": "navigation"
+                }
+            ]
+        },
         "configuration": [
             {
                 "type": "object",
                 "title": "envd",
                 "properties": {
-                    "envd.trace.server": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "default": "off",
-                        "description": "Log requests and responses to envd LSP",
-                        "enum": [
-                            "off",
-                            "debug"
-                        ],
-                        "pattern": "off|debug",
-                        "patternErrorMessage": "Invalid log level"
+                    "envd.server.trace": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Log requests and responses to envd LSP"
                     },
                     "envd.server.port": {
                         "type": [
@@ -71,7 +248,7 @@
                             "null"
                         ],
                         "default": null,
-                        "description": "File path of envd to run the language server",
+                        "description": "File path of envd client",
                         "scope": "machine-overridable"
                     },
                     "envd.showStatusBarButton": {
@@ -82,12 +259,6 @@
                     }
                 }
             }
-        ],
-        "commands": [
-            {
-                "command": "envd.restartServer",
-                "title": "Restart envd LSP Server"
-            }
         ]
     },
     "main": "./out/extension.js",
@@ -95,36 +266,39 @@
         "onLanguage:envd"
     ],
     "scripts": {
-        "vscode:prepublish": "npm run clean && npm run esbuild-base -- --minify",
+        "vscode:prepublish": "npm run compile",
         "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
         "esbuild": "npm run esbuild-base -- --sourcemap",
-        "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-        "compile": "npm run esbuild",
-        "watch": "npm run esbuild-watch",
+        "compile": "tsc -p ./",
+        "compile-tests": "tsc -p . --outDir out",
+        "watch": "tsc -watch -p ./",
         "clean": "rm -rf out",
-        "prettier": "prettier --write \"src/**/*.ts\"",
-        "check": "prettier --check \"src/**/*.ts*\" && tsc -p .",
+        "pretest": "npm run compile",
+        "lint": "eslint src test --ext ts",
+        "fix-lint": "eslint src test --ext ts --fix",
         "test": "jest"
     },
     "dependencies": {
         "@types/glob": "^7.2.0",
-        "@types/jest": "^27.4.1",
         "@types/split2": "^3.2.1",
         "glob": "^7.2.0",
-        "jest": "^27.5.1",
         "split2": "^4.1.0",
-        "ts-jest": "^27.1.4",
         "vscode-languageclient": "^7.0.0"
     },
     "devDependencies": {
+        "@types/jest": "^29.2.4",
         "@types/node": "^17.0.13",
         "@types/vscode": "^1.63.0",
+        "@typescript-eslint/eslint-plugin": "^5.47.1",
+        "@typescript-eslint/parser": "^5.47.1",
         "@vscode/test-electron": "^1.6.2",
-        "esbuild": "^0.14.29",
+        "esbuild": "0.14.54",
+        "eslint": "^8.31.0",
+        "eslint-config-xo": "^0.43.1",
+        "eslint-config-xo-typescript": "^0.55.1",
+        "jest-environment-node": "^29.3.1",
         "prettier": "2.6.2",
-        "typescript": "^4.4.3"
-    },
-    "jest": {
-        "preset": "ts-jest"
+        "ts-jest": "^29.0.3",
+        "typescript": "^4.9.4"
     }
 }

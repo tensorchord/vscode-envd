@@ -76,7 +76,19 @@
         "commands": [
             {
                 "command": "envd.restartServer",
-                "title": "Restart envd LSP Server"
+                "title": "Envd: Restart LSP Server"
+            },
+            {
+                "command": "envd.switchEnvdVersion",
+                "title": "Envd: Switch envd version"
+            },
+            {
+                "command": "envd.switchLspVersion",
+                "title": "Envd: Switch LSP Server version"
+            },
+            {
+                "command": "envd.upgradeAll",
+                "title": "Envd: Upgrade Envd and LSP Server"
             },
             {
                 "command": "envd-environment.refresh",
@@ -231,7 +243,7 @@
                     "envd.server.trace": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Log requests and responses to envd LSP"
+                        "markdownDescription": "Log requests and responses of `LSP Server`"
                     },
                     "envd.server.port": {
                         "type": [
@@ -239,22 +251,65 @@
                             "null"
                         ],
                         "default": null,
-                        "description": "Port (on localhost) of running language server",
-                        "scope": "machine-overridable"
-                    },
-                    "envd.envd.path": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "default": null,
-                        "description": "File path of envd client",
+                        "markdownDescription": "Port (on localhost) of running `LSP Server`",
                         "scope": "machine-overridable"
                     },
                     "envd.showStatusBarButton": {
                         "type": "boolean",
                         "default": true,
-                        "description": "Whether to show a button for this extension in the VSCode StatusBar",
+                        "description": "Whether to show a button for the extension in the VSCode StatusBar",
+                        "scope": "machine-overridable"
+                    },
+                    "envd.intall.checkVersion": {
+                        "type": "boolean",
+                        "default": true,
+                        "markdownDescription": "If set to true, the extension will check `envd` and `LSP Server` version at start, and notify when new version available or `envd` and `LSP Server` version dismatch. Version management of `envd` is only valid when `pip package manager` is chosen at `#envd.intall.envdManage#`",
+                        "scope": "machine-overridable"
+                    },
+                    "envd.intall.envdManage": {
+                        "type": "string",
+                        "default": "pip package manager",
+                        "enum": [
+                            "pip package manager",
+                            "raw path"
+                        ],
+                        "markdownEnumDescriptions": [
+                            "Depend on `pip` to install or point to envd path",
+                            "Given the envd path(could not switch envd version)"
+                        ],
+                        "markdownDescription": "When choose `pip package manager`, the envd is managed by pip from `pythonPath` and `indexUrl`. If choose `raw path`, we use a fixed path of envd, this option may be helpful if you want to used a self-compiled envd. The version switch feature is only enabled at `pip package manager`",
+                        "scope": "machine-overridable"
+                    },
+                    "envd.intall.versionCheckSource": {
+                        "type": "string",
+                        "default": "pypi",
+                        "enum": [
+                            "pypi",
+                            "Github"
+                        ],
+                        "markdownEnumDescriptions": [
+                            "Fetch version from https://pypi.org/pypi/envd/json",
+                            "Fetch version from https://api.github.com/repos/tensorchord/envd-lsp/tags"
+                        ],
+                        "markdownDescription": "Where to fetch online `envd` version list, from `pypi` or `Github`",
+                        "scope": "machine-overridable"
+                    },
+                    "envd.intall.python.pythonPath": {
+                        "type": "string",
+                        "default": "python3",
+                        "markdownDescription": "Used path of Python to install envd, valid when `pip package manager` is chosen at `#envd.intall.envdManage#`",
+                        "scope": "machine-overridable"
+                    },
+                    "envd.intall.python.indexUrl": {
+                        "type": "string",
+                        "default": "",
+                        "markdownDescription": "Used mirror of Pypi, valid when `pip package manager` is chosen at `#envd.intall.envdManage#`",
+                        "scope": "machine-overridable"
+                    },
+                    "envd.intall.path.envdPath": {
+                        "type": "string",
+                        "default": null,
+                        "markdownDescription": "File path of envd, valid when `raw path` is chosen at `#envd.intall.envdManage#`",
                         "scope": "machine-overridable"
                     }
                 }
@@ -283,11 +338,13 @@
         "@types/split2": "^3.2.1",
         "glob": "^7.2.0",
         "split2": "^4.1.0",
-        "vscode-languageclient": "^7.0.0"
+        "vscode-languageclient": "^7.0.0",
+        "node-fetch": "3.2.8",
+        "compare-versions": "6.0.0-rc.1"
     },
     "devDependencies": {
         "@types/jest": "^29.2.4",
-        "@types/node": "^17.0.13",
+        "@types/node": "^18.11.18",
         "@types/vscode": "^1.63.0",
         "@typescript-eslint/eslint-plugin": "^5.47.1",
         "@typescript-eslint/parser": "^5.47.1",
@@ -299,6 +356,7 @@
         "jest-environment-node": "^29.3.1",
         "prettier": "2.6.2",
         "ts-jest": "^29.0.3",
+        "ts-node": "^10.9.1",
         "typescript": "^4.9.4"
     }
 }

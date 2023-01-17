@@ -1,10 +1,11 @@
 /**
  * Commands call `Envd` and collect their output,
- * will be runned backward by child_process.execSync
+ * will be runned background by child_process.execSync
  * and the error will be handled by our VSCode format logger
  */
 import {execSync} from 'child_process';
-import {error, Module} from './logger';
+import {join} from 'path';
+import {error, Module} from '../logger';
 
 export type EnvdVersion = {
 	envd: string;
@@ -26,10 +27,11 @@ export type EnvdVersion = {
 	// `envd version -d` output above lines
 };
 
+export const unexistVersion = '0.0.0';
 export function checkEnvdVersion(envdPath: string): string {
 	const command = `${envdPath} version --format json`;
 	const versionInfo = cmdOutputJsonHandle<EnvdVersion>(command);
-	return versionInfo.envd;
+	return versionInfo.envd.replace('v', '');
 }
 
 export type EnvInfo = {
@@ -110,11 +112,48 @@ export function listContexts(envdPath: string): CtxInfo[] {
 	return ctxInfo;
 }
 
+export function getPipEnvdPath(pythonPath: string): string {
+	const command = `${pythonPath} -m site --user-base`;
+	const output = cmdOutputHandle(command);
+	const base = output.trimStart().trimEnd();
+	return join(base, 'bin/envd');
+}
+
+export function getLspVersion(lspPath: string): string {
+	const command = `${lspPath} --version`;
+	const output = cmdOutputHandle(command);
+	const base = output.trimStart().trimEnd();
+	// eslint-disable-next-line no-useless-escape
+	const regexp = /^envd-lsp github\.com\/tensorchord\/envd-lsp v(\d+\.\d+\.\d+)[\+0-9a-z]*$/g;
+	const matches = [...base.matchAll(regexp)];
+	if (matches.length !== 1) {
+		error(`LSP Server version not meet specifications: ${output}`, Module.INSTALL);
+	}
+
+	// Return match group version
+	return matches[0][1];
+}
+
 function cmdOutputJsonHandle<T>(command: string): T {
 	try {
 		const output = execSync(command, {encoding: 'utf8', maxBuffer: 50 * 1024 * 1024}).toString();
 		const envInfo: T = JSON.parse(output) as T;
 		return envInfo;
+	} catch (e) {
+		if (e instanceof Error) {
+			error(`Failed at exec "${command}", error: ${(e).message}`, Module.MANAGER);
+		} else {
+			error(`Failed at exec "${command}"`, Module.MANAGER);
+		}
+
+		throw e;
+	}
+}
+
+function cmdOutputHandle(command: string): string {
+	try {
+		const output = execSync(command, {encoding: 'utf8', maxBuffer: 50 * 1024 * 1024}).toString();
+		return output;
 	} catch (e) {
 		if (e instanceof Error) {
 			error(`Failed at exec "${command}", error: ${(e).message}`, Module.MANAGER);

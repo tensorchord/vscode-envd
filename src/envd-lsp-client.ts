@@ -43,6 +43,18 @@ const envdUnavailableMessage
     + 'Please visit https://envd.tensorchord.ai/docs/get-started to install envd.'
     + 'Autocomplete will not function without a compatible version of envd installed.';
 
+export let lspPath: string;
+switch (process.platform) {
+	case 'darwin':
+		lspPath = path.join(__dirname, '../bin/envd-lsp_Darwin_x86_64');
+		break;
+	case 'linux':
+		lspPath = path.join(__dirname, '../bin/envd-lsp_Linux_x86_64');
+		break;
+	default:
+		break;
+}
+
 export class EnvdLspClient extends LanguageClient {
 	static clientOptions(ch: OutputChannel): LanguageClientOptions {
 		return {
@@ -76,7 +88,7 @@ export class EnvdLspClient extends LanguageClient {
 
 	public start(): Disposable {
 		const disp = super.start();
-		this.info('envd LSP started');
+		this.info('envd LSP Server started');
 		return disp;
 	}
 
@@ -119,17 +131,7 @@ export class EnvdLspClient extends LanguageClient {
 			return {writer: socket, reader: socket};
 		}
 
-		let envdPath = path.join(__dirname, '../bin/envd-lsp_Linux_x86_64');
-
 		try {
-			switch (process.platform) {
-				case 'darwin':
-					envdPath = path.join(__dirname, '../bin/envd-lsp_Darwin_x86_64');
-					break;
-				default:
-					break;
-			}
-
 			const args: string[] = [];
 			this.info('Starting child process');
 			const trace = getTrace();
@@ -143,7 +145,7 @@ export class EnvdLspClient extends LanguageClient {
 			}
 
 			args.push('lsp');
-			return spawn(envdPath, args);
+			return spawn(lspPath, args);
 		} catch (e) {
 			this.warn(envdUnavailableMessage);
 			this.outputChannel.show();

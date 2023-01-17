@@ -5,6 +5,8 @@ export const envdChannel = window.createOutputChannel('envd');
 export enum Module {
 	LSP = '[LSP]',
 	MANAGER = '[MANAGER]',
+	INSTALL = '[INSTALL]',
+	CONFIG = '[CONFIG]',
 }
 
 export function info(message: string, module: Module) {
@@ -20,4 +22,16 @@ export function warn(message: string, module: Module) {
 export function error(message: string, module: Module) {
 	const time = new Date().toLocaleTimeString('en-US');
 	envdChannel.appendLine(`[Error  - ${time}] ${module} ${message}`);
+}
+
+export function errorMessage(err: unknown) {
+	if (typeof err === 'string') {
+		return err;
+	}
+
+	if (err instanceof Error) {
+		return err.message;
+	}
+
+	return 'unknown';
 }

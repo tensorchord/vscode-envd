@@ -1,6 +1,6 @@
 import {type TreeDataProvider, EventEmitter, type Event, type TreeItem} from 'vscode';
 import {getEnvdPath} from '../config';
-import {type CtxInfo, listContexts} from '../envd-handler';
+import {type CtxInfo, listContexts} from '../operation/cmd-back';
 import {Module, warn} from '../logger';
 import {Builder, BuilderAddress, ContextCurrent, ContextOther, Runner, RunnerAddress} from './context-entry';
 

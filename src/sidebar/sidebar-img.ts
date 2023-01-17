@@ -1,6 +1,6 @@
 import {type Event, EventEmitter, type TreeDataProvider, type TreeItem} from 'vscode';
 import {getEnvdPath} from '../config';
-import {descImg, type EnvDescribe, type ImgInfo, listImgs} from '../envd-handler';
+import {descImg, type EnvDescribe, type ImgInfo, listImgs} from '../operation/cmd-back';
 import {Module, warn} from '../logger';
 import {IdEntry, Image, SizeEntry} from './img-entry';
 import {Dependency, DepEntry, DepTypeEntry, EndPointEntry, GPUEntry, groupBy, StatusEntry} from './shared-entry';

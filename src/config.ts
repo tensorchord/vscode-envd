@@ -13,8 +13,11 @@
 // limitations under the License.
 
 import {type Uri, window, workspace} from 'vscode';
+import {info, Module, warn} from './logger';
+import {getPipEnvdPath} from './operation/cmd-back';
 
-export const envd = 'envd';
+export const fallbackEnvdPath = 'envd';
+export const fallbackPythonPath = 'python3';
 
 export function getConfig(uri?: Uri) {
 	const section = 'envd';
@@ -36,10 +39,83 @@ export function getTrace(): boolean {
 	return getConfig().get<boolean>('server.trace')!;
 }
 
+export function getcheckVersion(): boolean {
+	return getConfig().get<boolean>('intall.checkVersion')!;
+}
+
+export enum EnvdManage {
+	PIP,
+	PATH,
+}
+export function getEnvdManage(): EnvdManage {
+	const mode = getConfig().get<string>('intall.envdManage');
+	switch (mode) {
+		case 'pip package manager':
+			return EnvdManage.PIP;
+		case 'raw path':
+			return EnvdManage.PATH;
+		default:
+			warn(`invalid config option "${mode ?? 'undefined'}" for envd.intall.envdManage, fallback to "pip package manager"`, Module.CONFIG);
+			return EnvdManage.PIP;
+	}
+}
+
+export enum VersionSource {
+	PYPI = 'PYPI',
+	GITHUB = 'GITHUB',
+}
+export function getVersionSource(): VersionSource {
+	const mode = getConfig().get<string>('intall.versionCheckSource');
+	switch (mode) {
+		case 'pypi':
+			return VersionSource.PYPI;
+		case 'Github':
+			return VersionSource.GITHUB;
+		default:
+			warn(`invalid config option "${mode ?? 'undefined'}" for envd.intall.versionCheckSource, fallback to "pypi"`, Module.CONFIG);
+			return VersionSource.PYPI;
+	}
+}
+
+export function getPythonPath(): string {
+	const pythonPath = getConfig().get<string>('intall.python.pythonPath');
+	if (!pythonPath) {
+		warn(`invalid config option "${pythonPath ?? 'undefined'}" for envd.intall.pip.pythonPath, fallback to ${fallbackPythonPath}`, Module.CONFIG);
+		return fallbackPythonPath;
+	}
+
+	return pythonPath;
+}
+
+export function getPypiMirror(): string | undefined {
+	const pypiMirror = getConfig().get<string>('intall.python.indexUrl');
+	if (!pypiMirror) {
+		return undefined;
+	}
+
+	info(`pypi mirror exists, will use "${pypiMirror}" at pip install`, Module.CONFIG);
+
+	return pypiMirror;
+}
+
 export function getEnvdPath(): string {
-	const path = getConfig().get<string>('envd.path');
+	const mode = getEnvdManage();
+	const pythonPath = getPythonPath();
+	let path: string | undefined;
+	switch (mode) {
+		case EnvdManage.PIP:
+			path = getPipEnvdPath(pythonPath);
+			break;
+		case EnvdManage.PATH:
+			path = getConfig().get<string>('intall.path.envdPath');
+			break;
+		default:
+			warn('invalid config option "undefined" for envd.intall.envdManage, unable to deduced envd path, fallback to "envd"', Module.CONFIG);
+			break;
+	}
+
 	if (!path) {
-		return envd;
+		return fallbackEnvdPath;
 	}
 
 	return path;

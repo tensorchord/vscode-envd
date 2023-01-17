@@ -1,7 +1,10 @@
-import {commands, extensions, type MessageOptions, window, Uri, env, type Terminal} from 'vscode';
+import {commands, extensions, type MessageOptions, window, Uri, env} from 'vscode';
 import * as logger from './logger';
-import {getEnvdPath} from './config';
-import {type CtxInfo, type EnvInfo, type ImgInfo} from './envd-handler';
+import {EnvdManage, getEnvdManage, getEnvdPath, getPypiMirror, getPythonPath} from './config';
+import {type CtxInfo, type EnvInfo, type ImgInfo} from './operation/cmd-back';
+import {destroyEnvironment, pipInstallEnvd, removeContext, removeImage, useContext} from './operation/cmd-show';
+import {installLsp} from './operation/network';
+import {lspPath} from './envd-lsp-client';
 
 /**
  * VSCode workflow for do an operation, works with VSCode window API
@@ -146,47 +149,48 @@ export async function askRemoveContext(info: CtxInfo) {
 	});
 }
 
-function createOrActivateTerminal(): Terminal {
-	const terminalName = 'ENVD Worker';
-	let terminal: Terminal;
-	const terminals = window.terminals.filter(terminal => terminal.name === terminalName);
-	if (terminals.length === 0) {
-		terminal = window.createTerminal(terminalName);
-	} else {
-		terminal = terminals[0];
+export async function askInstallEnvd(installVersion: string, localVersion?: string): Promise<boolean> {
+	const manageMode = getEnvdManage();
+	if (manageMode === EnvdManage.PATH) {
+		logger.warn('envd install is disabled at "raw path" manage mode, you could unset "Version Check" at configure to hide this message', logger.Module.INSTALL);
+		return false;
 	}
 
-	terminal.show();
-	return terminal;
+	if (localVersion) {
+		logger.info(`Request install envd of version ${installVersion}, and replace ${localVersion}`, logger.Module.INSTALL);
+	} else {
+		logger.info(`Request install envd of version ${installVersion}`, logger.Module.INSTALL);
+	}
+
+	const message = `Will install envd of version ${installVersion}. Do you want to do it now?`;
+	const choice = await window.showInformationMessage(message, 'Install', 'Not now');
+	if (choice === 'Install') {
+		logger.info(`install envd of version ${installVersion}`, logger.Module.INSTALL);
+		const pythonPath = getPythonPath();
+		const indexUrl = getPypiMirror();
+		pipInstallEnvd(pythonPath, installVersion, indexUrl);
+		return true;
+	}
+
+	logger.info('installation is cancelled', logger.Module.INSTALL);
+	return false;
 }
 
-/**
- * Commands instruct `Envd` to do some operation,
- * will be runned foreground for user to check `Envd` logs.
- * We open a VSCode terminal and send command to it,
- * the error won't be handled as they could be inspected from terminal
- */
+export async function askInstallLsp(installVersion: string, localVersion?: string): Promise<boolean> {
+	if (localVersion) {
+		logger.info(`Request install LSP Server of version ${installVersion}, and replace ${localVersion}`, logger.Module.INSTALL);
+	} else {
+		logger.info(`Request install LSP Server of version ${installVersion}`, logger.Module.INSTALL);
+	}
 
-function useContext(envdPath: string, ctxName: string) {
-	const terminal = createOrActivateTerminal();
-	const command = `${envdPath} context use --name ${ctxName}`;
-	terminal.sendText(command);
-}
+	const message = `Will install LSP Server of version ${installVersion}. Do you want to do it now?`;
+	const choice = await window.showInformationMessage(message, 'Install', 'Not now');
+	if (choice === 'Install') {
+		logger.info(`install LSP Server of version ${installVersion}`, logger.Module.INSTALL);
+		await installLsp(lspPath, installVersion);
+		return true;
+	}
 
-function destroyEnvironment(envdPath: string, envName: string) {
-	const terminal = createOrActivateTerminal();
-	const command = `${envdPath} destroy --name ${envName}`;
-	terminal.sendText(command);
-}
-
-function removeImage(envdPath: string, imgName: string, imgTag: string) {
-	const terminal = createOrActivateTerminal();
-	const command = `${envdPath} image remove --image ${imgName} --tag ${imgTag}`;
-	terminal.sendText(command);
-}
-
-export function removeContext(envdPath: string, ctxName: string) {
-	const terminal = createOrActivateTerminal();
-	const command = `${envdPath} context rm --name ${ctxName}`;
-	terminal.sendText(command);
+	logger.info('installation is cancelled', logger.Module.INSTALL);
+	return false;
 }

@@ -1,6 +1,6 @@
 import {compareVersions} from 'compare-versions';
 import {commands, window} from 'vscode';
-import {EnvdManage, getEnvdManage, getEnvdPath, getVersionSource, VersionSource} from './config';
+import {EnvdLocation, getEnvdLocation, getEnvdPath, getVersionSource, VersionSource} from './config';
 import {lspPath} from './envd-lsp-client';
 import {error, errorMessage, info, Module, warn} from './logger';
 import {checkEnvdVersion, getLspVersion, unexistVersion} from './operation/cmd-back';
@@ -58,8 +58,8 @@ export class VersionManager {
 
 	private async manageEnvdVersion() {
 		// Envd version manage will onlt enabled when use pip to install envd
-		const manageMode = getEnvdManage();
-		if (manageMode === EnvdManage.PATH) {
+		const manageMode = getEnvdLocation();
+		if (manageMode === EnvdLocation.PATH) {
 			warn('version check procedure is disabled at "raw path" manage mode, you could unset "Version Check" at configure to hide this message', Module.INSTALL);
 		}
 

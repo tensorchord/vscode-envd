@@ -43,20 +43,20 @@ export function getcheckVersion(): boolean {
 	return getConfig().get<boolean>('intall.checkVersion')!;
 }
 
-export enum EnvdManage {
+export enum EnvdLocation {
 	PIP,
 	PATH,
 }
-export function getEnvdManage(): EnvdManage {
-	const mode = getConfig().get<string>('intall.envdManage');
+export function getEnvdLocation(): EnvdLocation {
+	const mode = getConfig().get<string>('intall.envdLocation');
 	switch (mode) {
 		case 'pip package manager':
-			return EnvdManage.PIP;
+			return EnvdLocation.PIP;
 		case 'raw path':
-			return EnvdManage.PATH;
+			return EnvdLocation.PATH;
 		default:
-			warn(`invalid config option "${mode ?? 'undefined'}" for envd.intall.envdManage, fallback to "pip package manager"`, Module.CONFIG);
-			return EnvdManage.PIP;
+			warn(`invalid config option "${mode ?? 'undefined'}" for envd.intall.envdLocation, fallback to "pip package manager"`, Module.CONFIG);
+			return EnvdLocation.PIP;
 	}
 }
 
@@ -99,18 +99,18 @@ export function getPypiMirror(): string | undefined {
 }
 
 export function getEnvdPath(): string {
-	const mode = getEnvdManage();
+	const mode = getEnvdLocation();
 	const pythonPath = getPythonPath();
 	let path: string | undefined;
 	switch (mode) {
-		case EnvdManage.PIP:
+		case EnvdLocation.PIP:
 			path = getPipEnvdPath(pythonPath);
 			break;
-		case EnvdManage.PATH:
+		case EnvdLocation.PATH:
 			path = getConfig().get<string>('intall.path.envdPath');
 			break;
 		default:
-			warn('invalid config option "undefined" for envd.intall.envdManage, unable to deduced envd path, fallback to "envd"', Module.CONFIG);
+			warn('invalid config option "undefined" for envd.intall.envdLocation, unable to deduced envd path, fallback to "envd"', Module.CONFIG);
 			break;
 	}
 

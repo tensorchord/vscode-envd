@@ -263,10 +263,10 @@
                     "envd.intall.checkVersion": {
                         "type": "boolean",
                         "default": true,
-                        "markdownDescription": "If set to true, the extension will check `envd` and `LSP Server` version at start, and notify when new version available or `envd` and `LSP Server` version dismatch. Version management of `envd` is only valid when `pip package manager` is chosen at `#envd.intall.envdManage#`",
+                        "markdownDescription": "If set to true, the extension will check `envd` and `LSP Server` version at start, and notify when new version available or `envd` and `LSP Server` version dismatch. Version management of `envd` is only valid when `pip package manager` is chosen at `#envd.intall.envdLocation#`",
                         "scope": "machine-overridable"
                     },
-                    "envd.intall.envdManage": {
+                    "envd.intall.envdLocation": {
                         "type": "string",
                         "default": "pip package manager",
                         "enum": [
@@ -297,19 +297,19 @@
                     "envd.intall.python.pythonPath": {
                         "type": "string",
                         "default": "python3",
-                        "markdownDescription": "Used path of Python to install envd, valid when `pip package manager` is chosen at `#envd.intall.envdManage#`",
+                        "markdownDescription": "Used path of Python to install envd, valid when `pip package manager` is chosen at `#envd.intall.envdLocation#`",
                         "scope": "machine-overridable"
                     },
                     "envd.intall.python.indexUrl": {
                         "type": "string",
                         "default": "",
-                        "markdownDescription": "Used mirror of Pypi, valid when `pip package manager` is chosen at `#envd.intall.envdManage#`",
+                        "markdownDescription": "Used mirror of Pypi, valid when `pip package manager` is chosen at `#envd.intall.envdLocation#`",
                         "scope": "machine-overridable"
                     },
                     "envd.intall.path.envdPath": {
                         "type": "string",
                         "default": null,
-                        "markdownDescription": "File path of envd, valid when `raw path` is chosen at `#envd.intall.envdManage#`",
+                        "markdownDescription": "File path of envd, valid when `raw path` is chosen at `#envd.intall.envdLocation#`",
                         "scope": "machine-overridable"
                     }
                 }
@@ -324,8 +324,8 @@
         "vscode:prepublish": "npm run compile",
         "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
         "esbuild": "npm run esbuild-base -- --sourcemap",
-        "compile": "tsc -p ./",
-        "compile-tests": "tsc -p . --outDir out",
+        "compile": "npm run esbuild",
+        "build-local": "npx vsce package -o dist/envd-vscode.vsix",
         "watch": "tsc -watch -p ./",
         "clean": "rm -rf out",
         "pretest": "npm run compile",

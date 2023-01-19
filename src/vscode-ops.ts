@@ -1,6 +1,6 @@
 import {commands, extensions, type MessageOptions, window, Uri, env} from 'vscode';
 import * as logger from './logger';
-import {EnvdManage, getEnvdManage, getEnvdPath, getPypiMirror, getPythonPath} from './config';
+import {EnvdLocation, getEnvdLocation, getEnvdPath, getPypiMirror, getPythonPath} from './config';
 import {type CtxInfo, type EnvInfo, type ImgInfo} from './operation/cmd-back';
 import {destroyEnvironment, pipInstallEnvd, removeContext, removeImage, useContext} from './operation/cmd-show';
 import {installLsp} from './operation/network';
@@ -150,8 +150,8 @@ export async function askRemoveContext(info: CtxInfo) {
 }
 
 export async function askInstallEnvd(installVersion: string, localVersion?: string): Promise<boolean> {
-	const manageMode = getEnvdManage();
-	if (manageMode === EnvdManage.PATH) {
+	const manageMode = getEnvdLocation();
+	if (manageMode === EnvdLocation.PATH) {
 		logger.warn('envd install is disabled at "raw path" manage mode, you could unset "Version Check" at configure to hide this message', logger.Module.INSTALL);
 		return false;
 	}

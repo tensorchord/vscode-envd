@@ -1,9 +1,13 @@
-import fetch from 'node-fetch';
+import {type RequestInfo, type RequestInit} from 'node-fetch';
+
 import * as fs from 'fs';
 import * as path from 'path';
 import {compareVersions} from 'compare-versions';
 import {Module, warn, error, info} from '../logger';
 import {getLspVersion} from './cmd-back';
+
+// Convert ESM into CommonJS import ref: https://stackoverflow.com/a/69331469
+const fetch = async (url: RequestInfo, init?: RequestInit) => import('node-fetch').then(async ({default: fetch}) => fetch(url, init));
 
 type GithubTagOutput = {
 	[x: string]: unknown;

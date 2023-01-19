@@ -1,7 +1,6 @@
 import {type Event, EventEmitter, type TreeDataProvider, type TreeItem} from 'vscode';
-
 import {getEnvdPath} from '../config';
-import {descEnv, type EnvDescribe, type EnvInfo, listEnvs} from '../envd-handler';
+import {descEnv, type EnvDescribe, type EnvInfo, listEnvs} from '../operation/cmd-back';
 import {Dependency, DepEntry, DepTypeEntry, EndPointEntry, GPUEntry, groupBy, StatusEntry} from './shared-entry';
 import {Environment, ImageTag, Port, PortIPEntry, PortNumEntry, PortProtocolEntry, SSHEntry} from './env-entry';
 import {Module, warn} from '../logger';

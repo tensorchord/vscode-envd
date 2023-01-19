@@ -14,8 +14,8 @@
 
 import {type ExtensionContext, window, commands} from 'vscode';
 import {EnvdLspClient} from './envd-lsp-client';
-import {envdChannel, Module, warn} from './logger';
-import {attachSSH, attachWindow, askDestroyEnvironment, askRemoveImage, askRemoveContext, envdUseContext, attachEndpoint} from './terminal-ops';
+import {envdChannel, Module, warn, info} from './logger';
+import {attachSSH, attachWindow, askDestroyEnvironment, askRemoveImage, askRemoveContext, envdUseContext, attachEndpoint} from './vscode-ops';
 import {type ContextCurrent, type ContextOther} from './sidebar/context-entry';
 import {type Environment} from './sidebar/env-entry';
 import {type Image} from './sidebar/img-entry';
@@ -23,13 +23,34 @@ import {type EndPointEntry} from './sidebar/shared-entry';
 import {CtxProvider} from './sidebar/sidebar-context';
 import {EnvProvider} from './sidebar/sidebar-env';
 import {ImgProvider} from './sidebar/sidebar-img';
+import {getcheckVersion, getShowStatusBarButton} from './config';
+import {VersionManager} from './version-manager';
 
 let client: EnvdLspClient;
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
 	client = new EnvdLspClient(context, envdChannel);
 	client.start();
 
+	const manager = new VersionManager();
+	const enableEnvdCheck = getcheckVersion();
+	void manager.check(enableEnvdCheck);
+
+	const sidebarEnable = getShowStatusBarButton();
+	if (sidebarEnable) {
+		registerSidebar();
+	}
+}
+
+export function deactivate(): Thenable<void> | undefined {
+	if (!client) {
+		return undefined;
+	}
+
+	return client.stop();
+}
+
+function registerSidebar() {
 	const envProvider = new EnvProvider();
 	const imgProvider = new ImgProvider();
 	const ctxProvider = new CtxProvider();
@@ -111,12 +132,4 @@ export function activate(context: ExtensionContext) {
 		await askRemoveContext(info);
 		ctxProvider.refresh();
 	});
-}
-
-export function deactivate(): Thenable<void> | undefined {
-	if (!client) {
-		return undefined;
-	}
-
-	return client.stop();
 }

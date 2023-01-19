@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import {checkEnvdVersion, listEnvs, type EnvInfo, descEnv, type EnvDescribe, listImgs, type ImgInfo, descImg, listContexts, type CtxInfo} from '../src/envd-handler';
+import {checkEnvdVersion, listEnvs, type EnvInfo, descEnv, type EnvDescribe, listImgs, type ImgInfo, descImg, listContexts, type CtxInfo, getPipEnvdPath, getLspVersion} from '../src/operation/cmd-back';
 import * as proc from 'child_process';
 import type * as logger from '../src/logger';
 
@@ -8,10 +8,8 @@ jest.mock('child_process', () => ({
 }));
 
 jest.mock('../src/logger', () => ({
-	Module: { // eslint-disable-line @typescript-eslint/naming-convention
-		LSP: '[LSP]', // eslint-disable-line @typescript-eslint/naming-convention
-		MANAGER: '[MANAGER]', // eslint-disable-line @typescript-eslint/naming-convention
-	},
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	Module: {LSP: '[LSP]', MANAGER: '[MANAGER]', INSTALL: '[INSTALL]', CONFIG: '[CONFIG]'},
 	error: jest.fn((message: string, _module: logger.Module) => {
 		console.error(message);
 	}),
@@ -23,7 +21,7 @@ jest.mock('../src/logger', () => ({
 	}),
 }));
 
-describe('envd-handler working with envd client', () => {
+describe('envd-handler working with envd', () => {
 	beforeEach(() => {
 		jest.resetAllMocks();
 	});
@@ -40,7 +38,7 @@ describe('envd-handler working with envd client', () => {
 			].join('');
 			return Buffer.from(output, 'utf-8');
 		});
-		expect(checkEnvdVersion('ENVD')).toBe('v0.2.5-alpha.7+0c21af8.dirty');
+		expect(checkEnvdVersion('ENVD')).toBe('0.2.5-alpha.7+0c21af8.dirty');
 	});
 	test('get version of envd clean build', () => {
 		(proc.execSync as jest.Mock).mockImplementation(_ => {
@@ -52,7 +50,7 @@ describe('envd-handler working with envd client', () => {
 			].join('');
 			return Buffer.from(output, 'utf-8');
 		});
-		expect(checkEnvdVersion('ENVD')).toBe('v0.2.4');
+		expect(checkEnvdVersion('ENVD')).toBe('0.2.4');
 	});
 	test('get version when envd uninstalled', () => {
 		(proc.execSync as jest.Mock).mockImplementation(_ => {
@@ -169,5 +167,33 @@ describe('envd-handler working with envd client', () => {
 			throw new Error('mock-error');
 		});
 		expect(() => listContexts('ENVD-UNEXIST')).toThrowError('mock-error');
+	});
+	test('get envd path from pip', () => {
+		(proc.execSync as jest.Mock).mockImplementation(_ => {
+			const output = '/home/user/.local\n';
+			return Buffer.from(output, 'utf-8');
+		});
+		const path: string = getPipEnvdPath('ENVD');
+		expect(path).toBe('/home/user/.local/bin/envd');
+	});
+	test('get envd path from pip when python uninstalled', () => {
+		(proc.execSync as jest.Mock).mockImplementation(_ => {
+			throw new Error('mock-error');
+		});
+		expect(() => getPipEnvdPath('ENVD-UNEXIST')).toThrowError('mock-error');
+	});
+	test('get LSP Server version', () => {
+		(proc.execSync as jest.Mock).mockImplementation(_ => {
+			const output = 'envd-lsp github.com/tensorchord/envd-lsp v0.3.5+9bb022f';
+			return Buffer.from(output, 'utf-8');
+		});
+		const version: string = getLspVersion('ENVD');
+		expect(version).toBe('0.3.5');
+	});
+	test('get LSP Server version when python uninstalled', () => {
+		(proc.execSync as jest.Mock).mockImplementation(_ => {
+			throw new Error('mock-error');
+		});
+		expect(() => getLspVersion('ENVD-UNEXIST')).toThrowError('mock-error');
 	});
 });

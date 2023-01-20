@@ -4,16 +4,12 @@ on:
   push:
     tags:
       - 'v*'
-  pull_request:
-    paths:
-    - '.github/workflows/release.yml'
-    - 'package.json'
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
       - name: Download language server binaries
@@ -28,15 +24,11 @@ jobs:
           mv envd-lsp_* bin/
           chmod a+x bin/*
           npm i
-          npm run vscode:prepublish
-      - name: Publish to Open VSX Registry
-        uses: HaaLeo/publish-vscode-extension@v1
-        id: publishToOpenVSX
-        with:
-          pat: ${{ secrets.OPEN_VSX_TOKEN }}
-      - name: Publish to Visual Studio Marketplace
-        uses: HaaLeo/publish-vscode-extension@v1
-        with:
-          pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
-          registryUrl: https://marketplace.visualstudio.com
-          extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
+      - name: Package Extension (release)
+        run: npx vsce package -o "./vscode-envd.vsix"
+      - name: Publish Extension (OpenVSX)
+        run: npx ovsx publish --pat ${{ secrets.OPEN_VSX_TOKEN }} --packagePath "./vscode-envd.vsix" --skip-duplicate
+        timeout-minutes: 2
+      - name: Publish Extension (Code Marketplace)
+        run: npx vsce publish --pat ${{ secrets.VS_MARKETPLACE_TOKEN }} --packagePath "./vscode-envd.vsix" --skip-duplicate
+        timeout-minutes: 2

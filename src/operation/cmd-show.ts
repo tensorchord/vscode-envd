@@ -43,6 +43,18 @@ export function pipInstallEnvd(pythonPath: string, version: string, indexUrl?: s
 	terminal.sendText(command);
 }
 
+export function envdUpEnvironment(envdPath: string, dirPath: string, fileName: string, entryName: string) {
+	const terminal = createOrActivateTerminal();
+	const command = `${envdPath} up --path ${dirPath} --from ${fileName}:${entryName}`;
+	terminal.sendText(command);
+}
+
+export function envdBuildEnvironment(envdPath: string, dirPath: string, fileName: string, entryName: string) {
+	const terminal = createOrActivateTerminal();
+	const command = `${envdPath} build --path ${dirPath} --from ${fileName}:${entryName}`;
+	terminal.sendText(command);
+}
+
 function createOrActivateTerminal(): Terminal {
 	const terminalName = 'ENVD Worker';
 	let terminal: Terminal;

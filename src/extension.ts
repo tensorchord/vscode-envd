@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {type ExtensionContext, window, commands} from 'vscode';
+import {type ExtensionContext, window, commands, languages} from 'vscode';
 import {EnvdLspClient} from './envd-lsp-client';
 import {envdChannel, Module, warn, info} from './logger';
 import {attachSSH, attachWindow, askDestroyEnvironment, askRemoveImage, askRemoveContext, envdUseContext, attachEndpoint} from './vscode-ops';
@@ -23,23 +23,29 @@ import {type EndPointEntry} from './sidebar/shared-entry';
 import {CtxProvider} from './sidebar/sidebar-context';
 import {EnvProvider} from './sidebar/sidebar-env';
 import {ImgProvider} from './sidebar/sidebar-img';
-import {getcheckVersion, getShowStatusBarButton} from './config';
+import {getcheckVersion, getEnvdPath, getShowStatusBarButton} from './config';
 import {VersionManager} from './version-manager';
+import {EnvdCodeLensProvider} from './codelens/codelens-provider';
+import {envdBuildEnvironment, envdUpEnvironment} from './operation/cmd-show';
 
 let client: EnvdLspClient;
 
 export async function activate(context: ExtensionContext) {
+	// Init LSP Server
 	client = new EnvdLspClient(context, envdChannel);
 	client.start();
 
+	// Register CodeLens to enable function-based `envd up` and `envd build`
+	registerEnvInit(context);
+
+	// Init manage sidebar
+	const sidebarEnable = getShowStatusBarButton();
+	registerSidebar(sidebarEnable);
+
+	// Version check for envd and LSP Server
 	const manager = new VersionManager();
 	const enableEnvdCheck = getcheckVersion();
 	void manager.check(enableEnvdCheck);
-
-	const sidebarEnable = getShowStatusBarButton();
-	if (sidebarEnable) {
-		registerSidebar();
-	}
 }
 
 export function deactivate(): Thenable<void> | undefined {
@@ -50,7 +56,26 @@ export function deactivate(): Thenable<void> | undefined {
 	return client.stop();
 }
 
-function registerSidebar() {
+function registerEnvInit(context: ExtensionContext) {
+	context.subscriptions.push(
+		languages.registerCodeLensProvider(
+			EnvdCodeLensProvider.selector, new EnvdCodeLensProvider(client)));
+
+	commands.registerCommand('envd-codelens.up-environment', (dirPath: string, fileName: string, funcName: string) => {
+		const envdPath = getEnvdPath();
+		envdUpEnvironment(envdPath, dirPath, fileName, funcName);
+	});
+	commands.registerCommand('envd-codelens.build-environment', (dirPath: string, fileName: string, funcName: string) => {
+		const envdPath = getEnvdPath();
+		envdBuildEnvironment(envdPath, dirPath, fileName, funcName);
+	});
+}
+
+function registerSidebar(enable: boolean) {
+	if (!enable) {
+		return;
+	}
+
 	const envProvider = new EnvProvider();
 	const imgProvider = new ImgProvider();
 	const ctxProvider = new CtxProvider();

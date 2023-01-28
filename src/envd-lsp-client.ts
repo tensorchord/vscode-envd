@@ -34,7 +34,7 @@ import {PlaceholderErrorHandler, EnvdErrorHandler} from './error-handlers';
 import {getServerPort, getTrace, type Port} from './config';
 import {Module} from './logger';
 
-const extensionLang = 'envd';
+export const extensionLang = 'envd';
 const extensionName = 'envd';
 const maxRestartCount = 5;
 const envdUnavailableNotification = 'envd language server could not be started';
@@ -46,7 +46,7 @@ const envdUnavailableMessage
 export let lspPath: string;
 switch (process.platform) {
 	case 'darwin':
-		lspPath = path.join(__dirname, '../bin/envd-lsp_Darwin_x86_64');
+		lspPath = path.join(__dirname, '../bin/envd-lsp_Darwin_all');
 		break;
 	case 'linux':
 		lspPath = path.join(__dirname, '../bin/envd-lsp_Linux_x86_64');

@@ -5,6 +5,7 @@ import {type CtxInfo, type EnvInfo, type ImgInfo} from './operation/cmd-back';
 import {destroyEnvironment, pipInstallEnvd, removeContext, removeImage, useContext} from './operation/cmd-show';
 import {installLsp} from './operation/network';
 import {lspPath} from './envd-lsp-client';
+import {attachWindowByContainer, attachWindowBySSH} from './operation/fallback';
 
 /**
  * VSCode workflow for do an operation, works with VSCode window API
@@ -22,40 +23,18 @@ export function attachSSH(info: EnvInfo) {
 	terminal.sendText(`ssh ${info.ssh_target}`);
 }
 
-type OpenWindowsArgs = {
-	host: string;
-	userName?: string;
-	port?: number;
-};
-
 /**
  * Attach into a environment by ssh at new VSCode window
  * @param info infomation of environment
  */
-export async function attachWindow(info: EnvInfo) {
+export function attachWindow(info: EnvInfo) {
 	logger.info(`Attach environment ${info.name} to VSCode`, logger.Module.MANAGER);
-	const extensionName = 'ms-vscode-remote.remote-ssh';
-	// Guide the users to install Microsoft Remote SSH.
-	const extensionAvailable = extensions.getExtension(extensionName);
-	if (!extensionAvailable) {
-		logger.info(`Request installation of "${extensionName}" extension`, logger.Module.MANAGER);
-		await commands.executeCommand('extension.open', extensionName);
-		const message = 'It is recommended to install Microsoft Remote-SSH to enable attach to VSCode. Do you want to install it now?';
-		const choice = await window.showInformationMessage(message, 'Install', 'Not now');
-		if (choice === 'Install') {
-			logger.info(`Install "${extensionName}" extension`, logger.Module.MANAGER);
-			await commands.executeCommand('workbench.extensions.installExtension', extensionName);
-		} else {
-			logger.info('Installation is cancelled', logger.Module.MANAGER);
-			return;
-		}
+	if (env.remoteName === 'ssh-remote') {
+		logger.info('Turn to DevContainer when already at SSH connected server', logger.Module.MANAGER);
+		void attachWindowByContainer(info);
+	} else {
+		void attachWindowBySSH(info);
 	}
-
-	const openWindowArgs: OpenWindowsArgs = {
-		host: info.ssh_target,
-	};
-	await commands.executeCommand(
-		'opensshremotes.openEmptyWindow', openWindowArgs);
 }
 
 /**

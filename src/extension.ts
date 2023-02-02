@@ -109,7 +109,7 @@ function registerSidebar(enable: boolean) {
 			return;
 		}
 
-		void attachWindow(info);
+		attachWindow(info);
 	});
 	commands.registerCommand('endpoint.attach-endpoint', (node: EndPointEntry) => {
 		attachEndpoint(node.label as string);

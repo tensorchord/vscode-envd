@@ -304,7 +304,7 @@
                     "envd.intall.python.indexUrl": {
                         "type": "string",
                         "default": "",
-                        "markdownDescription": "Used mirror of Pypi, valid when `pip package manager` is chosen at `#envd.intall.envdLocation#`",
+                        "markdownDescription": "Used mirror of PyPI, valid when `pip package manager` is chosen at `#envd.intall.envdLocation#`",
                         "scope": "machine-overridable"
                     },
                     "envd.intall.path.envdPath": {
